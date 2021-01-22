@@ -91,7 +91,7 @@ function xmldb_quizaccess_proctoring_upgrade($oldversion) {
     require_once($CFG->libdir.'/db/upgradelib.php'); // Core Upgrade-related functions.
     $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
 
-    if ($oldversion < 2020091016) {
+    if ($oldversion < 2020091018) {
         // Define field output to be added to task_log.
         $table = new xmldb_table('quizaccess_proctoring_logs');
         $field = new xmldb_field('fileid', XMLDB_TYPE_INTEGER, '10', null, false, null, null, 'status');
@@ -105,7 +105,7 @@ function xmldb_quizaccess_proctoring_upgrade($oldversion) {
         //upgrade_main_savepoint(true, 2020091019.00);
         //var_dump($table);
         //die();
-        upgrade_plugin_savepoint(true, 2020091016, 'quizaccess', 'proctoring');
+        upgrade_plugin_savepoint(true, 2020091018, 'quizaccess', 'proctoring');
         return true;
     }
 }

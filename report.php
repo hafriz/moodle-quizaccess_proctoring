@@ -233,7 +233,9 @@ if (has_capability('quizaccess/proctoring:viewreport', $context, $USER->id) && $
 
         foreach ($sqlexecuted as $info) {
             $pictures .= $info->webcampicture
-                ? ' <a class="quiz-img-div" onclick="return confirm(`Are you sure want to delete this picture?`)" href="?courseid='.$courseid.'&cmid=' . $cmid.'&reportid='.$info->reportid.'&log_action=deletesingle"><img title="Click to Delete" width="100" src="' . $info->webcampicture . '" alt="' . $info->firstname . ' ' . $info->lastname . '" /></a>'
+                ? '<a class="quiz-img-div" onclick="return confirm(`Are you sure want to delete this picture?`)" href="?courseid='.$courseid.'&cmid=' . $cmid.'&reportid='.$info->reportid.'&log_action=deletesingle">
+                    <img title="Click to Delete" width="100" src="' . $info->webcampicture . '" alt="' . $info->firstname . ' ' . $info->lastname . '" />
+                   </a>'
                 : '';
         }
 
