@@ -29,6 +29,8 @@ define(['jquery', 'core/ajax', 'core/notification'],
 
         setup: function(props) {
 
+            takepicturedelay = props.frequency;
+
             // Skip for summary page
             if (document.getElementById("page-mod-quiz-summary") !== null &&
                 document.getElementById("page-mod-quiz-summary").innerHTML.length) {
@@ -39,10 +41,14 @@ define(['jquery', 'core/ajax', 'core/notification'],
                 return false;
             }
 
-            var width = 230; // We will scale the photo width to this
+            //var width = 230; // We will scale the photo width to this
+            var width = props.image_width; // We will scale the photo width to this
             var height = 0; // This will be computed based on the input stream
             var streaming = false;
             var data = null;
+
+            console.log("freq paisi:",takepicturedelay);
+            console.log("width paisi:",width);
 
             $('#mod_quiz_navblock').append('<div class="card-body p-3"><h3 class="no text-left">Webcam</h3> <br/>'
              + '<video id="video">Video stream not available.</video><canvas id="canvas" style="display:none;"></canvas>'

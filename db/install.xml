@@ -23,6 +23,7 @@
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" COMMENT="User who validate identity" PREVIOUS="quizid" NEXT="profilepicture"/>
         <FIELD NAME="webcampicture" TYPE="text" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" COMMENT="Webcam photo used for validation purposes" PREVIOUS="profilepicture" NEXT="status"/>
         <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Validation process status" PREVIOUS="webcampicture" NEXT="timemodified"/>
+        <FIELD NAME="fileid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="File table id" PREVIOUS="status" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Validation process date and time" PREVIOUS="status"/>
       </FIELDS>
       <KEYS>

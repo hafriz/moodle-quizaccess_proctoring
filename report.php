@@ -84,13 +84,12 @@ if (has_capability('quizaccess/proctoring:deletecamshots', $context, $USER->id)
     && $reportid != null
     && !empty($log_action)
 ) {
-    list($insql, $inparams) = $DB->get_in_or_equal($studentid, SQL_PARAMS_NAMED);
+    // Delete images
+    // Remove logs from quizaccess_proctoring_logs
+    $DB->delete_records('quizaccess_proctoring_logs', array('courseid' => $courseid, 'quizid' => $cmid, 'userid' => $studentid));
 
-    $DB->set_field_select('quizaccess_proctoring_logs', 'userid', 0, "userid {$insql}", $inparams);
-
-    // Delete users file (webcam images).
-    $filesql = "SELECT * FROM {files} WHERE userid {$insql}";
-    $usersfile = $DB->get_records_sql($filesql, $inparams);
+    $filesql = 'SELECT * FROM {files} WHERE userid IN ('.$studentid.') AND contextid IN ('.$context->id.') AND component = \'quizaccess_proctoring\' AND filearea = \'picture\'';
+    $usersfile = $DB->get_records_sql($filesql);
 
     $fs = get_file_storage();
     foreach ($usersfile as $file):
@@ -105,6 +104,38 @@ if (has_capability('quizaccess/proctoring:deletecamshots', $context, $USER->id)
     );
     redirect($url2, 'Images deleted!', -11);
 }
+
+if(has_capability('quizaccess/proctoring:deletecamshots', $context, $USER->id)
+    && $log_action=="deletesingle"
+){
+    //redirect($CFG->wwwroot.'/local/message/manage.php', 'Message created successfully!');
+    $logsql = "SELECT * FROM {quizaccess_proctoring_logs} WHERE id= $reportid";
+    $records = $DB->get_records_sql($logsql);
+
+    if(count($records)>0){
+        $file_id = 0;
+        $tempcontextid = 0;
+
+        foreach($records as $record){
+            $file_id = $record->fileid;
+        }
+
+        $filesql = "SELECT * FROM {files} WHERE id=$file_id";
+        $usersfile = $DB->get_records_sql($filesql);
+
+        foreach($usersfile as $tempfile){
+            $tempcontextid = $tempfile->contextid;
+        }
+        ///// Delete Image
+        /// Delete the file record
+        $DB->delete_records('quizaccess_proctoring_logs', array('id' => $reportid));
+        /// Delete the actual file
+        $fs = get_file_storage();
+        $fs->delete_area_files($tempcontextid, 'quizaccess_proctoring', 'picture', $file_id);
+        //var_dump($file_id);
+    }
+}
+
 
 if (has_capability('quizaccess/proctoring:viewreport', $context, $USER->id) && $cmid != null && $courseid != null) {
 
@@ -188,8 +219,8 @@ if (has_capability('quizaccess/proctoring:viewreport', $context, $USER->id) && $
         );
         $tablepictures->define_headers(
             array(get_string('name', 'quizaccess_proctoring'),
-            get_string('webcampicture', 'quizaccess_proctoring'),
-            get_string('actions', 'quizaccess_proctoring')
+                get_string('webcampicture', 'quizaccess_proctoring'),
+                get_string('actions', 'quizaccess_proctoring')
             )
         );
         $tablepictures->define_baseurl($url);
@@ -199,16 +230,20 @@ if (has_capability('quizaccess/proctoring:viewreport', $context, $USER->id) && $
 
         $tablepictures->setup();
         $pictures = '';
+
         foreach ($sqlexecuted as $info) {
             $pictures .= $info->webcampicture
-                ? ' <img width="100" src="' . $info->webcampicture . '" alt="' . $info->firstname . ' ' . $info->lastname . '" />'
+                ? '<a class="quiz-img-div" onclick="return confirm(`Are you sure want to delete this picture?`)" href="?courseid='.$courseid.'&cmid=' . $cmid.'&reportid='.$info->reportid.'&log_action=deletesingle">
+                    <img title="Click to Delete" width="100" src="' . $info->webcampicture . '" alt="' . $info->firstname . ' ' . $info->lastname . '" />
+                   </a>'
                 : '';
         }
+
         $datapictures = array(
             $info->firstname . ' ' . $info->lastname . '<br/>' . $info->email,
             $pictures,
             '<a onclick="return confirm(`Are you sure want to delete the pictures?`)" class="text-danger" href="?courseid=' . $courseid .
-            '&quizid=' . $cmid . '&cmid=' . $cmid . '&studentid=' . $info->studentid . '&reportid=' . $info->reportid . '&log_action=delete">Delete images</a>'
+            '&quizid=' . $cmid . '&cmid=' . $cmid . '&studentid=' . $info->studentid . '&reportid=' . $info->reportid . '&log_action=delete">Delete ALL Images</a>',
         );
         $tablepictures->add_data($datapictures);
         $tablepictures->finish_html();
@@ -221,4 +256,7 @@ if (has_capability('quizaccess/proctoring:viewreport', $context, $USER->id) && $
 }
 echo '</div>';
 echo $OUTPUT->footer();
+
+$icon_path = new moodle_url('/mod/quiz/accessrule/proctoring/pix/delete_icon.png');
+echo "<style> .quiz-img-div{position:relative; display: inline-block;}.quiz-img-div:hover:after{content:'';position:absolute;left: 0px;top: 0px;bottom: 0px;width: 100%;background: url('$icon_path') center no-repeat;background-size: 50px;}.quiz-img-div:hover img{opacity: 0.4;} </style>";
 
