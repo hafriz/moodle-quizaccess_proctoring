@@ -32,7 +32,7 @@ $string['notrequired'] = 'not required';
 $string['privacy:metadata'] = 'We do not share any personal data with third parties.';
 $string['proctoringheader'] = '<strong>To continue with this quiz attempt you must open your webcam, and it will take some of your pictures randomly during the quiz.</strong>';
 $string['proctoringlabel'] = 'I agree with the validation process.';
-$string['proctoringstatement'] = 'This exam requires webcam validation process. You must allow the webcam and it will take some random pictures during the quiz <br />(Please allow your web browser to access your camera).';
+$string['proctoringstatement'] = 'This exam requires webcam validation process. You must allow the webcam AND check the remember this webcam option checkbox. Your webcam will take some random pictures during the quiz <br />(Please allow your web browser to access your camera).';
 $string['camhtml'] = '<div class="camera"> <video id="video">Video stream not available.</video></div> <canvas id="canvas" style="display:none;"> </canvas> <img style="display:none;" id="photo" alt="The screen capture will appear in this box."/>';
 $string['pluginname'] = 'Proctoring';
 $string['quizaccess_proctoring'] = 'Quizaccess Proctoring';
@@ -74,3 +74,8 @@ $string['privacy:quizaccess_proctoring_logs'] = 'QuizAccess Proctoring logs';
 $string['privacy:core_files'] = 'QuizAccess Proctoring webcam pictures';
 $string['privacy:metadata:core_files'] = 'The Quiz Access stores users picture which has been shot by the webcam during quiz attempt.';
 
+$string['setting:screenshotdelay'] = 'The delay between screenshots';
+$string['setting:screenshotdelay_desc'] = 'Given value will be the delay in seconds between each screenshot';
+
+$string['setting:screenshotwidth'] = 'The width of the screenshot image';
+$string['setting:screenshotwidth_desc'] = 'Given value will be the width of the screenshot. The image will be scaled to that';

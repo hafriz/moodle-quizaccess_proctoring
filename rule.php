@@ -224,6 +224,34 @@ class quizaccess_proctoring extends quiz_access_rule_base
             $record->status = $attempt;
             $record->timemodified = time();
             $record->id = $DB->insert_record('quizaccess_proctoring_logs', $record, true);
+
+
+            //////// Get Image Frequency and Image Width ////////
+            $imagefrequencysql = "SELECT * FROM {config_plugins} WHERE plugin = 'quizaccess_proctoring' AND name = 'autoreconfigurefrequency'";
+            $frequencydata = $DB->get_recordset_sql($imagefrequencysql);
+
+            $frequency = 3*1000;
+            if(count($frequencydata)>0){
+                foreach($frequencydata as $row){
+                    $frequency = (int)$row->value*1000;
+                }
+            }
+
+            $imagesizesql = "SELECT * FROM {config_plugins} WHERE plugin = 'quizaccess_proctoring' AND name = 'autoreconfigureimagewidth'";
+            $imagesizedata = $DB->get_recordset_sql($imagesizesql);
+
+            $image_width = 230;
+            if(count($imagesizedata)>0){
+                foreach($imagesizedata as $row){
+                    $image_width = $row->value;
+                }
+            }
+
+            $record->frequency = $frequency;
+            $record->image_width = $image_width;
+
+//            var_dump($record);
+//            die();
             $page->requires->js_call_amd('quizaccess_proctoring/proctoring', 'setup', array($record));
         }
     }

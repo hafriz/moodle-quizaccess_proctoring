@@ -210,7 +210,15 @@ class quizaccess_proctoring_external extends external_api
         $record->contextid = $context->id;
         $record->userid = $USER->id;
 
-        $fs->create_file_from_string($record, $data);
+        $file = $fs->create_file_from_string($record, $data);
+
+        $filesql = 'SELECT * FROM {files} WHERE userid IN ('.$USER->id.') AND contextid IN ('.$context->id.') AND mimetype = \'image/png\' AND component = \'quizaccess_proctoring\' AND filearea = \'picture\' ORDER BY id DESC LIMIT 1';
+        $usersfile = $DB->get_records_sql($filesql);
+
+        $file_id = 0;
+        foreach ($usersfile as $tempfile):
+            $file_id = $tempfile->id;
+        endforeach;
 
         $url = moodle_url::make_pluginfile_url(
             $context->id,
@@ -230,6 +238,7 @@ class quizaccess_proctoring_external extends external_api
         $record->userid = $USER->id;
         $record->webcampicture = "{$url}";
         $record->status = $camshot->status;
+        $record->fileid = $file_id;
         $record->timemodified = time();
         $screenshotid = $DB->insert_record('quizaccess_proctoring_logs', $record, true);
 
